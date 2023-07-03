@@ -1,0 +1,186 @@
+create schema formulaUno;
+use formulaUno;
+
+CREATE TABLE circuits (
+  circuitId INT PRIMARY KEY,
+  circuitRef VARCHAR(255),
+  name VARCHAR(255),
+  location VARCHAR(255),
+  country VARCHAR(255),
+  lat FLOAT,
+  lng FLOAT,
+  alt INT,
+  url VARCHAR(255)
+);
+
+CREATE TABLE constructors (
+  constructorId INT PRIMARY KEY,
+  constructorRef VARCHAR(255),
+  name VARCHAR(255),
+  nationality VARCHAR(255),
+  url VARCHAR(255)
+);
+
+CREATE TABLE races (
+  raceId INT PRIMARY KEY,
+  year INT,
+  round INT,
+  circuitId INT,
+  name VARCHAR(255),
+  date DATE,
+  time TIME,
+  url VARCHAR(255),
+  fp1_date DATE,
+  fp1_time TIME,
+  fp2_date DATE,
+  fp2_time TIME,
+  fp3_date DATE,
+  fp3_time TIME,
+  quali_date DATE,
+  quali_time TIME,
+  sprint_date DATE,
+  sprint_time TIME,
+  FOREIGN KEY (circuitId) REFERENCES circuits(circuitId)
+);
+
+CREATE TABLE drivers (
+  driverId INT PRIMARY KEY,
+  driverRef VARCHAR(255),
+  number INT,
+  code VARCHAR(255),
+  forename VARCHAR(255),
+  surname VARCHAR(255),
+  dob DATE,
+  nationality VARCHAR(255),
+  url VARCHAR(255)
+);
+
+CREATE TABLE constructor_results (
+  constructorResultsId INT PRIMARY KEY,
+  raceId INT,
+  constructorId INT,
+  points FLOAT,
+  status VARCHAR(255),
+  FOREIGN KEY (raceId) REFERENCES races(raceId),
+  FOREIGN KEY (constructorId) REFERENCES constructors(constructorId)
+);
+
+CREATE TABLE constructor_standings (
+  constructorStandingsId INT PRIMARY KEY,
+  raceId INT,
+  constructorId INT,
+  points FLOAT,
+  position INT,
+  positionText VARCHAR(255),
+  wins INT,
+  FOREIGN KEY (raceId) REFERENCES races(raceId),
+  FOREIGN KEY (constructorId) REFERENCES constructors(constructorId)
+);
+
+CREATE TABLE driver_standings (
+  driverStandingsId INT PRIMARY KEY,
+  raceId INT,
+  driverId INT,
+  points FLOAT,
+  position INT,
+  positionText VARCHAR(255),
+  wins INT,
+  FOREIGN KEY (raceId) REFERENCES races(raceId),
+  FOREIGN KEY (driverId) REFERENCES drivers(driverId)
+);
+
+CREATE TABLE lap_times (
+  raceId INT,
+  driverId INT,
+  lap INT,
+  position INT,
+  time TIME(3),
+  milliseconds INT,
+  PRIMARY KEY (raceId, driverId, lap),
+  FOREIGN KEY (raceId) REFERENCES races(raceId),
+  FOREIGN KEY (driverId) REFERENCES drivers(driverId)
+);
+
+CREATE TABLE pit_stops (
+  raceId INT,
+  driverId INT,
+  stop INT,
+  lap INT,
+  time TIME,
+  duration TIME(3),
+  milliseconds INT,
+  PRIMARY KEY (raceId, driverId, stop),
+  FOREIGN KEY (raceId) REFERENCES races(raceId),
+  FOREIGN KEY (driverId) REFERENCES drivers(driverId)
+);
+
+CREATE TABLE qualifying (
+  qualifyId INT PRIMARY KEY,
+  raceId INT,
+  driverId INT,
+  constructorId INT,
+  number INT,
+  position INT,
+  q1 TIME(3),
+  q2 TIME(3),
+  q3 TIME(3),
+  FOREIGN KEY (raceId) REFERENCES races(raceId),
+  FOREIGN KEY (driverId) REFERENCES drivers(driverId),
+  FOREIGN KEY (constructorId) REFERENCES constructors(constructorId)
+);
+
+CREATE TABLE results (
+  resultId INT PRIMARY KEY,
+  raceId INT,
+  driverId INT,
+  constructorId INT,
+  number INT,
+  grid INT,
+  position INT,
+  positionText VARCHAR(255),
+  positionOrder INT,
+  points INT,
+  laps INT,
+  time VARCHAR(255),
+  milliseconds INT,
+  fastestLap INT,
+  `rank` INT,
+  fastestlaptime TIME(3),
+  fastestLapSpeed FLOAT,
+  statusId INT,
+  FOREIGN KEY (raceId) REFERENCES races(raceId),
+  FOREIGN KEY (driverId) REFERENCES drivers(driverId),
+  FOREIGN KEY (constructorId) REFERENCES constructors(constructorId)
+);
+
+CREATE TABLE seasons (
+  year INT PRIMARY KEY,
+  url VARCHAR(255)
+);
+
+CREATE TABLE sprint_results (
+  resultId INT PRIMARY KEY,
+  raceId INT,
+  driverId INT,
+  constructorId INT,
+  number INT,
+  grid INT,
+  position INT,
+  positionText VARCHAR(255),
+  positionOrder INT,
+  points INT,
+  laps INT,
+  time VARCHAR(255),
+  milliseconds INT,
+  fastestLap INT,
+  fastestLapTime TIME(3),
+  statusId INT,
+  FOREIGN KEY (raceId) REFERENCES races(raceId),
+  FOREIGN KEY (driverId) REFERENCES drivers(driverId),
+  FOREIGN KEY (constructorId) REFERENCES constructors(constructorId)
+);
+
+CREATE TABLE status (
+  statusId INT PRIMARY KEY,
+  status VARCHAR(255)
+);
